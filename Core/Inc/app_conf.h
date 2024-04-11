@@ -35,17 +35,38 @@
 /**
  * Define Tx Power
  */
-#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
+#define CFG_TX_POWER                      (0x1F) /* 6dBm */
 
 /**
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0x11aabbccddee)
 
-#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)      /**< 80ms */
-#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)      /**< 100ms */
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
+
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
+
+/**
+ * Define BLE Address Type
+ * Bluetooth address types defined in ble_legacy.h
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#define CFG_BLE_ADDRESS_TYPE              GAP_PUBLIC_ADDR
+
+#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x0080)      /**< 80ms */
+#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0x00A0)      /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640)     /**< 1s */
 #define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0)     /**< 2.5s */
+#define ADV_TYPE                          ADV_SCAN_IND
+#define BLE_ADDR_TYPE                     GAP_PUBLIC_ADDR
+#define ADV_FILTER                        NO_WHITE_LIST_USE
 /**
  * Define IO Authentication
  */
@@ -104,6 +125,17 @@
 #define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
+ * Define PHY
+ */
+#define ALL_PHYS_PREFERENCE                             0x00
+#define RX_2M_PREFERRED                                 0x02
+#define TX_2M_PREFERRED                                 0x02
+#define TX_1M                                           0x01
+#define TX_2M                                           0x02
+#define RX_1M                                           0x01
+#define RX_2M                                           0x02
+
+/**
 *   Identity root key used to derive IRK and DHK(Legacy)
 */
 #define CFG_BLE_IR     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0}
@@ -127,20 +159,28 @@
 /**< specific parameters */
 /*****************************************************/
 
+#define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */
+
 /**
- * Beacon selection
- * Beacons are all exclusive
- */
-#define CFG_EDDYSTONE_UID_BEACON_TYPE   (1<<0)
-#define CFG_EDDYSTONE_URL_BEACON_TYPE   (1<<1)
-#define CFG_EDDYSTONE_TLM_BEACON_TYPE   (1<<2)
-#define CFG_IBEACON                     (1<<3)
+* AD Element - Group B Feature
+*/
+/* LSB - First Byte */
+#define CFG_FEATURE_THREAD_SWITCH               (0x40)
 
-#define CFG_BEACON_TYPE                 (CFG_IBEACON)
+/* LSB - Second Byte */
+#define CFG_FEATURE_OTA_REBOOT                  (0x20)
 
-#define OTA_BEACON_DATA_ADDRESS         FLASH_BASE + 0x6000
-#define OFFSET_PAYLOAD_LENGTH           9
-#define OFFSET_PAYLOAD_DATA             10
+#define CONN_L(x) ((int)((x)/0.625f))
+#define CONN_P(x) ((int)((x)/1.25f))
+
+  /*  L2CAP Connection Update request parameters used for test only with smart Phone */
+#define L2CAP_REQUEST_NEW_CONN_PARAM             0
+
+#define L2CAP_INTERVAL_MIN              CONN_P(1000) /* 1s */
+#define L2CAP_INTERVAL_MAX              CONN_P(1000) /* 1s */
+#define L2CAP_PERIPHERAL_LATENCY             0x0000
+#define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
+
 /* USER CODE BEGIN Specific_Parameters */
 
 /* USER CODE END Specific_Parameters */
@@ -231,9 +271,9 @@
  * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config
  */
 #if defined(STM32WB5Mxx)
-  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_HSE_1024)
 #else
-  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_OTHER_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_OTHER_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_HSE_1024)
 #endif
 
 /**
@@ -622,7 +662,10 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_BEACON_UPDATE_REQ_ID,
+  CFG_TASK_ADV_CANCEL_ID,
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
+  CFG_TASK_CONN_UPDATE_REG_ID,
+#endif
   CFG_TASK_HCI_ASYNCH_EVT_ID,
   /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 

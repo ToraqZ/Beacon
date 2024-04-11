@@ -82,6 +82,50 @@ void HAL_MspInit(void)
 }
 
 /**
+* @brief IPCC MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hipcc: IPCC handle pointer
+* @retval None
+*/
+void HAL_IPCC_MspInit(IPCC_HandleTypeDef* hipcc)
+{
+  if(hipcc->Instance==IPCC)
+  {
+  /* USER CODE BEGIN IPCC_MspInit 0 */
+
+  /* USER CODE END IPCC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_IPCC_CLK_ENABLE();
+  /* USER CODE BEGIN IPCC_MspInit 1 */
+
+  /* USER CODE END IPCC_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief IPCC MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hipcc: IPCC handle pointer
+* @retval None
+*/
+void HAL_IPCC_MspDeInit(IPCC_HandleTypeDef* hipcc)
+{
+  if(hipcc->Instance==IPCC)
+  {
+  /* USER CODE BEGIN IPCC_MspDeInit 0 */
+
+  /* USER CODE END IPCC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_IPCC_CLK_DISABLE();
+  /* USER CODE BEGIN IPCC_MspDeInit 1 */
+
+  /* USER CODE END IPCC_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief RTC MSP Initialization
 * This function configures the hardware resources used in this example
 * @param hrtc: RTC handle pointer
@@ -96,10 +140,14 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 
   /* USER CODE END RTC_MspInit 0 */
 
+  /** Enable access to the backup domain
+  */
+    HAL_PWR_EnableBkUpAccess();
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
       Error_Handler();
@@ -184,9 +232,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /* USART1 interrupt Init */
-    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
@@ -216,8 +261,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     */
     HAL_GPIO_DeInit(GPIOB, STLINK_RX_Pin|STLINK_TX_Pin);
 
-    /* USART1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */

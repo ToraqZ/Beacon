@@ -6,24 +6,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../STM32_WPAN/App/app_ble.c \
-../STM32_WPAN/App/eddystone_tlm_service.c \
-../STM32_WPAN/App/eddystone_uid_service.c \
-../STM32_WPAN/App/eddystone_url_service.c \
-../STM32_WPAN/App/ibeacon_service.c 
+../STM32_WPAN/App/custom_app.c \
+../STM32_WPAN/App/custom_stm.c 
 
 OBJS += \
 ./STM32_WPAN/App/app_ble.o \
-./STM32_WPAN/App/eddystone_tlm_service.o \
-./STM32_WPAN/App/eddystone_uid_service.o \
-./STM32_WPAN/App/eddystone_url_service.o \
-./STM32_WPAN/App/ibeacon_service.o 
+./STM32_WPAN/App/custom_app.o \
+./STM32_WPAN/App/custom_stm.o 
 
 C_DEPS += \
 ./STM32_WPAN/App/app_ble.d \
-./STM32_WPAN/App/eddystone_tlm_service.d \
-./STM32_WPAN/App/eddystone_uid_service.d \
-./STM32_WPAN/App/eddystone_url_service.d \
-./STM32_WPAN/App/ibeacon_service.d 
+./STM32_WPAN/App/custom_app.d \
+./STM32_WPAN/App/custom_stm.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -33,7 +27,7 @@ STM32_WPAN/App/%.o STM32_WPAN/App/%.su STM32_WPAN/App/%.cyclo: ../STM32_WPAN/App
 clean: clean-STM32_WPAN-2f-App
 
 clean-STM32_WPAN-2f-App:
-	-$(RM) ./STM32_WPAN/App/app_ble.cyclo ./STM32_WPAN/App/app_ble.d ./STM32_WPAN/App/app_ble.o ./STM32_WPAN/App/app_ble.su ./STM32_WPAN/App/eddystone_tlm_service.cyclo ./STM32_WPAN/App/eddystone_tlm_service.d ./STM32_WPAN/App/eddystone_tlm_service.o ./STM32_WPAN/App/eddystone_tlm_service.su ./STM32_WPAN/App/eddystone_uid_service.cyclo ./STM32_WPAN/App/eddystone_uid_service.d ./STM32_WPAN/App/eddystone_uid_service.o ./STM32_WPAN/App/eddystone_uid_service.su ./STM32_WPAN/App/eddystone_url_service.cyclo ./STM32_WPAN/App/eddystone_url_service.d ./STM32_WPAN/App/eddystone_url_service.o ./STM32_WPAN/App/eddystone_url_service.su ./STM32_WPAN/App/ibeacon_service.cyclo ./STM32_WPAN/App/ibeacon_service.d ./STM32_WPAN/App/ibeacon_service.o ./STM32_WPAN/App/ibeacon_service.su
+	-$(RM) ./STM32_WPAN/App/app_ble.cyclo ./STM32_WPAN/App/app_ble.d ./STM32_WPAN/App/app_ble.o ./STM32_WPAN/App/app_ble.su ./STM32_WPAN/App/custom_app.cyclo ./STM32_WPAN/App/custom_app.d ./STM32_WPAN/App/custom_app.o ./STM32_WPAN/App/custom_app.su ./STM32_WPAN/App/custom_stm.cyclo ./STM32_WPAN/App/custom_stm.d ./STM32_WPAN/App/custom_stm.o ./STM32_WPAN/App/custom_stm.su
 
 .PHONY: clean-STM32_WPAN-2f-App
 
