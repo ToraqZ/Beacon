@@ -35,7 +35,7 @@
 /**
  * Define Tx Power
  */
-#define CFG_TX_POWER                      (0x1F) /* 6dBm */
+#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
 
 /**
  * Define Advertising parameters
@@ -121,8 +121,8 @@
 /**
  * Device name configuration for Generic Access Service
  */
-#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
-#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
+#define CFG_GAP_DEVICE_NAME             "Dosi"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (4)
 
 /**
  * Define PHY
